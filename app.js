@@ -65,46 +65,9 @@ app.get('/movies', )
 
 app.delete('/movie/:id', )
 
-app.get('/movies/:id', (req, res) => {
-    const { id } = req.params
-    const movie = movies.find(movie => movie.id == id)
-    if (movie) return res.json(movie)
+app.get('/movies/:id', )
 
-    res.status(404).json({ message: 'Movie not found' })
-})
-
-app.post('/movies', (req, res) => {
-    const result = validateMovie(req.body)
-
-    if (!result.success) {
-        // 422 Unprocessable Entity
-        return res.status(400).json({ error: JSON.parse(result.error.message) })
-    }
-
-
-    const newMovie = {
-        id: randomUUID(), // uuid v4 universal unique id
-        ...result.data
-    }
-
-    /*
-    const {
-        title,
-        genre,
-        year,
-        director,
-        duration,
-        rate,
-        poster
-    } = req.body
-    */
-
-    //No es REST porque se guarda el estado
-    //de la aplicación en memoria
-
-    movies.push(newMovie)
-    res.status(201).json(newMovie) //actualizar la caché del cliente
-})
+app.post('/movies', )
 
 app.patch('/movies/:id', (req, res) => {
     const result = validatePartialMovie(req.body)
