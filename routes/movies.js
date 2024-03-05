@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
     res.json(movies)
 })
 
-router.get('/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     const { id } = req.params
     const movieIndex = movies.findIndex(movie => movie.id == id)
 
