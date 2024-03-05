@@ -1,18 +1,13 @@
 import express, { json } from 'express'
-import { randomUUID } from 'node:crypto'
 import cors from 'cors'
+import { moviesRouter } from './routes/movies'
 // import movies from './movies.json' with { type: 'json'} <-- assert ya no se usa y with no lo soporta todavia
-import { validateMovie, validatePartialMovie } from './schemas/movies.js'
-
-
 
 // JSON en ESModules
 // import fs from 'node:fs'
 // const movies = JSON.parse(fs.readFileSync('./movies.json', 'utf-8'))
 
 // Como leer un json en ESModules recomendado por ahora
-
-
 
 const app = express()
 app.disable('x-powered-by')
@@ -40,26 +35,6 @@ app.use(cors({
 )) // dejarlo sin modificar los valores deja por defecto en *
 
 
-/*
-app.get('/', (req, res) => {
-
-    const format = req.query.format
-
-    if (format === 'html') {
-        res.send()
-    }
-    res.json({ message: 'hola mundo' })
-})
-*/
-
-/*
-app.get/delete('/movies', (req, res) => {
-    const origin = req.header('origin')
-    if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-        res.header('Access-Control-Allow-Origin', origin)
-    }
-})
-*/
 
 app.get('/movies', )
 
@@ -69,42 +44,9 @@ app.get('/movies/:id', )
 
 app.post('/movies', )
 
-app.patch('/movies/:id', (req, res) => {
-    const result = validatePartialMovie(req.body)
+app.patch('/movies/:id', )
 
-    if (!result.success) {
-        return res.status(400).json({ error: JSON.parse(result.error.message) })
-    }
-
-    const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id == id)
-
-    if (movieIndex == -1) return res.status(404).json({
-        message: 'Movie not found'
-    })
-
-    const updateMovie = {
-        ...movies[movieIndex],
-        ...result.data
-    }
-
-    movies[movieIndex] = updateMovie
-
-    return res.json(updateMovie)
-
-
-})
-
-/*
-app.options('/movies/:id', (req, res) => {
-    const origin = req.header('origin')
-
-    if(ACCEPTED_ORIGINS.cincludes(origin) || !origin) {
-        res.header('Access-Control-Allow-Origin', origin)
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
-    }
-})
-*/
+app.use('/movies', moviesRouter)
 
 const PORT = process.env.PORT ?? 1234
 
