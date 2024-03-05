@@ -1,13 +1,22 @@
-const express = require('express')
-const crypto = require('node:crypto')
-const cors = require('cors')
-const movies = require('./movies.json')
-const { validateMovie, validatePartialMovie } = require('./schemas/movies.cjs')
+import express, { json } from 'express'
+import { randomUUID } from 'node:crypto'
+import cors from 'cors'
+// import movies from './movies.json' with { type: 'json'} <-- assert ya no se usa y with no lo soporta todavia
+import { validateMovie, validatePartialMovie } from './schemas/movies.js'
+
+
+
+// JSON en ESModules
+// import fs from 'node:fs'
+// const movies = JSON.parse(fs.readFileSync('./movies.json', 'utf-8'))
+
+// Como leer un json en ESModules recomendado por ahora
+
 
 
 const app = express()
 app.disable('x-powered-by')
-app.use(express.json())
+app.use(json())
 app.use(cors({
 
     origin: (origin, callback) => {
@@ -52,29 +61,9 @@ app.get/delete('/movies', (req, res) => {
 })
 */
 
-app.get('/movies', (req, res) => {
-    const { genre } = req.query
-    if (genre) {
-        const filterMovies = movies.filter(
-            movie => movie.genre.some(g => g.toLowerCase() == genre.toLowerCase())
-        )
-        return res.json(filterMovies)
-    }
-    res.json(movies)
-})
+app.get('/movies', )
 
-app.delete('/movie/:id', (req, res) => {
-    const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id == id)
-
-    if (movieIndex == -1) {
-        return res.status(404).json({ message: 'Movie not found' })
-    }
-
-    movies.splice(movieIndex, 1)
-
-    return req.json({ message: 'Movide deleted' })
-})
+app.delete('/movie/:id', )
 
 app.get('/movies/:id', (req, res) => {
     const { id } = req.params
@@ -94,7 +83,7 @@ app.post('/movies', (req, res) => {
 
 
     const newMovie = {
-        id: crypto.randomUUID(), // uuid v4 universal unique id
+        id: randomUUID(), // uuid v4 universal unique id
         ...result.data
     }
 
