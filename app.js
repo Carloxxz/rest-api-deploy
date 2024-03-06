@@ -1,6 +1,6 @@
 import express, { json } from 'express'
-import cors from 'cors'
 import { moviesRouter } from './routes/movies'
+import { corsMiddleware } from './middlewares/cors'
 // import movies from './movies.json' with { type: 'json'} <-- assert ya no se usa y with no lo soporta todavia
 
 // JSON en ESModules
@@ -12,27 +12,7 @@ import { moviesRouter } from './routes/movies'
 const app = express()
 app.disable('x-powered-by')
 app.use(json())
-app.use(cors({
-
-    origin: (origin, callback) => {
-        const ACCEPTED_ORIGINS = [
-            'http://localhost:8080',
-            'http://localhost:1234',
-            'http://movies.com',
-            'http://midu.dev'
-        ]
-        if (ACCEPTED_ORIGINS.includes(origin)) {
-            return callback(null, true)
-        }
-
-        if (!origin) {
-            return callback(null, true)
-        }
-
-        return callback(new Error('Not allowed by CORS'))
-    }
-}
-)) // dejarlo sin modificar los valores deja por defecto en *
+app.use(corsMiddleware())
 
 
 
