@@ -16,15 +16,15 @@ app.use(corsMiddleware())
 
 
 
-app.get('/movies', )
+app.get('/movies',)
 
-app.delete('/movie/:id', )
+app.delete('/movie/:id',)
 
-app.get('/movies/:id', )
+app.get('/movies/:id',)
 
-app.post('/movies', )
+app.post('/movies',)
 
-app.patch('/movies/:id', )
+app.patch('/movies/:id',)
 
 app.use('/movies', moviesRouter)
 

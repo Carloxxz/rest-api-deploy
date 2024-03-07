@@ -1,19 +1,13 @@
-import { randomUUID } from 'node:crypto'
 import { Router } from "express";
-import { readJSON } from '../utils.js'
 import { validateMovie, validatePartialMovie } from '../schemas/movies.js'
+import { MovieModel } from '../models/movie.js';
 
-const movies = readJSON('./movies.json')
 export const moviesRouter = Router()
 
-moviesRouter.get('/', (req, res) => {
+moviesRouter.get('/', async (req, res) => {
     const { genre } = req.query
-    if (genre) {
-        const filterMovies = movies.filter(
-            movie => movie.genre.some(g => g.toLowerCase() == genre.toLowerCase())
-        )
-        return res.json(filterMovies)
-    }
+    const movies = await MovieModel.getAll({ genre })
+    
     res.json(movies)
 })
 
@@ -29,16 +23,15 @@ app.get('/', (req, res) => {
 })
 */
 
-moviesRouter.get('/:id', (req, res) => {
+moviesRouter.get('/:id', async (req, res) => {
     const { id } = req.params
-    const movie = movies.find(movie => movie.id == id)
+    const movie = await MovieModel.getById({ id })
     if (movie) return res.json(movie)
 
     res.status(404).json({ message: 'Movie not found' })
 })
 
-
-moviesRouter.post('/', (req, res) => {
+moviesRouter.post('/', async(req, res) => {
     const result = validateMovie(req.body)
 
     if (!result.success) {
@@ -46,40 +39,20 @@ moviesRouter.post('/', (req, res) => {
         return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
 
-
-    const newMovie = {
-        id: randomUUID(), // uuid v4 universal unique id
-        ...result.data
-    }
-
-    /*
-    const {
-        title,
-        genre,
-        year,
-        director,
-        duration,
-        rate,
-        poster
-    } = req.body
-    */
-
-    //No es REST porque se guarda el estado
-    //de la aplicación en memoria
+    const newMovie = await MovieModel.create({ input: result.data })
 
     movies.push(newMovie)
     res.status(201).json(newMovie) //actualizar la caché del cliente
 })
 
-moviesRouter.delete('/:id', (req, res) => {
+moviesRouter.delete('/:id', async(req, res) => {
     const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id == id)
+   
+    const result = MovieModel.delete({ id })
 
-    if (movieIndex == -1) {
+    if (result == false) {
         return res.status(404).json({ message: 'Movie not found' })
     }
-
-    movies.splice(movieIndex, 1)
 
     return req.json({ message: 'Movide deleted' })
 })
@@ -93,8 +66,7 @@ app.get/delete('/movies', (req, res) => {
 })
 */
 
-
-moviesRouter.patch('/:id', (req, res) => {
+moviesRouter.patch('/:id', async(req, res) => {
     const result = validatePartialMovie(req.body)
 
     if (!result.success) {
@@ -102,22 +74,10 @@ moviesRouter.patch('/:id', (req, res) => {
     }
 
     const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id == id)
-
-    if (movieIndex == -1) return res.status(404).json({
-        message: 'Movie not found'
-    })
-
-    const updateMovie = {
-        ...movies[movieIndex],
-        ...result.data
-    }
-
-    movies[movieIndex] = updateMovie
+    
+    const updateMovie = await MovieModel.update({ id, input: result.data})
 
     return res.json(updateMovie)
-
-
 })
 
 /*
