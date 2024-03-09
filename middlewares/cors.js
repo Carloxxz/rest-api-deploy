@@ -6,7 +6,7 @@ const ACCEPTED_ORIGINS = [
     'http://movies.com',
 ]
 
-export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS = {} }) => cors({
+export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {} ) => cors({
 
     origin: (origin, callback) => {
         'http://midu.dev'
